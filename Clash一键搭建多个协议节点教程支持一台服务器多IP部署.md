@@ -114,4 +114,4 @@ https://www.yunmgm.com
 
 ***
 
-有问题可以发邮件至海外邮箱rebeccalane27@gmail.com，发邮件可以用[匿名电子邮箱](https://github.com/Alvin9999/new-pac/wiki/%E5%8C%BF%E5%90%8D%E7%94%B5%E5%AD%90%E9%82%AE%E7%AE%B1)。
+
