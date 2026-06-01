@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YUNMGM - 一键搭建高速节点教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #080c14;
+    --bg-secondary: #0d1321;
+    --bg-card: #111827;
+    --border: #1e2d4a;
+    --text-primary: #e8edf5;
+    --text-secondary: #8899bb;
+    --accent: #00e5ff;
+    --accent-dim: #009faf;
+    --accent-green: #00ff88;
+    --accent-purple: #7c3aed;
+    --accent-orange: #f59e0b;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── 星空背景 ─── */
+  .stars-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ─── 导航栏 ─── */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(8, 12, 20, 0.72);
+    border-bottom: 1px solid rgba(30, 45, 74, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-family: 'Orbitron', monospace;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  .nav-logo-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 16px var(--accent), 0 0 32px var(--accent);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 16px var(--accent), 0 0 32px var(--accent); }
+    50% { box-shadow: 0 0 24px var(--accent), 0 0 56px var(--accent); }
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.25s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.25s ease;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    padding: 10px 24px;
+    border: 1px solid var(--accent);
+    border-radius: 100px;
+    color: var(--accent) !important;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px !important;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s ease !important;
+  }
+
+  .nav-cta::after { display: none !important; }
+
+  .nav-cta:hover {
+    background: var(--accent);
+    color: var(--bg-primary) !important;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .hero-bg::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    top: 60%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-content { max-width: 800px; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    font-family: 'Orbitron', monospace;
+    margin-bottom: 32px;
+    background: rgba(0, 229, 255, 0.04);
+  }
+
+  .hero-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .hero h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin: 0 auto 48px;
+    line-height: 1.8;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 36px;
+    border-radius: 100px;
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: var(--bg-primary);
+    box-shadow: 0 4px 24px rgba(0, 229, 255, 0.25);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 6px 36px rgba(0, 229, 255, 0.45);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    background: transparent;
+  }
+
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0, 229, 255, 0.04);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    margin-top: 64px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text-primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-stat-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ─── 分割线 ─── */
+  .section-divider {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 40px;
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .section-divider-icon {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 16px;
+  }
+
+  /* ─── 通用 section ─── */
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .section-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.3;
+  }
+
+  .section-title span {
+    background: linear-gradient(135deg, var(--accent), var(--accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .section-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-top: 16px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ─── 协议卡片 ─── */
+  .protocols-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .protocol-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    transition: all 0.35s ease;
+    overflow: hidden;
+  }
+
+  .protocol-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    border-radius: var(--radius);
+  }
+
+  .protocol-card:nth-child(1)::before { background: radial-gradient(circle at 100% 0%, rgba(0,229,255,0.07), transparent 70%); }
+  .protocol-card:nth-child(2)::before { background: radial-gradient(circle at 0% 0%, rgba(0,255,136,0.07), transparent 70%); }
+  .protocol-card:nth-child(3)::before { background: radial-gradient(circle at 100% 100%, rgba(124,58,237,0.07), transparent 70%); }
+  .protocol-card:nth-child(4)::before { background: radial-gradient(circle at 0% 100%, rgba(245,158,11,0.07), transparent 70%); }
+  .protocol-card:nth-child(5)::before { background: radial-gradient(circle at 50% 0%, rgba(0,229,255,0.07), transparent 70%); }
+  .protocol-card:nth-child(6)::before { background: radial-gradient(circle at 50% 100%, rgba(0,255,136,0.07), transparent 70%); }
+
+  .protocol-card:hover {
+    border-color: rgba(0, 229, 255, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  .protocol-card:hover::before { opacity: 1; }
+
+  .protocol-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pc-1 { background: rgba(0,229,255,0.1); color: var(--accent); }
+  .pc-2 { background: rgba(0,255,136,0.1); color: var(--accent-green); }
+  .pc-3 { background: rgba(124,58,237,0.1); color: var(--accent-purple); }
+  .pc-4 { background: rgba(245,158,11,0.1); color: var(--accent-orange); }
+  .pc-5 { background: rgba(0,229,255,0.08); color: var(--accent); }
+  .pc-6 { background: rgba(0,255,136,0.08); color: var(--accent-green); }
+
+  .protocol-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .protocol-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
+
+  .protocol-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tag-fast { border: 1px solid rgba(0,255,136,0.3); color: var(--accent-green); }
+  .tag-stable { border: 1px solid rgba(0,229,255,0.3); color: var(--accent); }
+  .tag-secure { border: 1px solid rgba(124,58,237,0.3); color: var(--accent-purple); }
+
+  /* ─── 教程步骤 ─── */
+  .steps-list {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: flex;
+    gap: 28px;
+    padding: 28px 0;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 72px;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--border), transparent);
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--bg-card);
+    z-index: 1;
+    transition: all 0.35s ease;
+  }
+
+  .step:hover .step-num {
+    border-color: var(--accent);
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.2);
+    background: rgba(0, 229, 255, 0.05);
+  }
+
+  .step-info { padding-top: 10px; }
+
+  .step-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ─── 特性区 ─── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .feature-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 28px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .feature-item:hover {
+    border-color: rgba(0, 229, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .feature-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .feature-title {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 40px;
+  }
+
+  .cta-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 64px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg at 50% 50%, transparent, rgba(0,229,255,0.04), transparent, rgba(0,255,136,0.04), transparent);
+    animation: rotate-glow 20s linear infinite;
+  }
+
+  @keyframes rotate-glow {
+    to { transform: rotate(360deg); }
+  }
+
+  .cta-content { position: relative; z-index: 1; }
+
+  .cta-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .cta-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 36px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ─── Footer ─── */
+  .footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 48px 40px 32px;
+    background: var(--bg-secondary);
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .footer-brand {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.25s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  .footer-copy {
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(30, 45, 74, 0.3);
+  }
+
+  /* ─── 响应式 ─── */
+  @media (max-width: 900px) {
+    .protocols-grid,
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .hero h1 { font-size: 36px; }
+    .section-title { font-size: 28px; }
+    .nav-links { display: none; }
+    .nav { padding: 16px 20px; }
+    .section { padding: 64px 20px; }
+  }
+
+  @media (max-width: 560px) {
+    .protocols-grid,
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero h1 { font-size: 28px; }
+    .hero-stats { gap: 24px; }
+    .hero-stat-num { font-size: 24px; }
+    .footer-inner { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 星空画布 -->
+<canvas class="stars-canvas" id="starsCanvas"></canvas>
+
+<!-- 导航栏 -->
+<nav class="nav" id="nav">
+  <a href="https://blog.yunmgm.com" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    YUNMGM
+  </a>
+  <ul class="nav-links">
+    <li><a href="https://blog.yunmgm.com">首页</a></li>
+    <li><a href="https://blog.yunmgm.com">教程</a></li>
+    <li><a href="https://blog.yunmgm.com">协议</a></li>
+    <li><a href="https://blog.yunmgm.com">文档</a></li>
+    <li><a href="https://blog.yunmgm.com" class="nav-cta">立即搭建</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      全球节点 · 即开即用
+    </div>
+    <h1>
+      一键搭建<br><span class="highlight">高速安全节点</span>
+    </h1>
+    <p class="hero-subtitle">1 分钟全自动部署，零技术门槛</p>
+    <p class="hero-desc">
+      支持 VLESS / Trojan / TUIC / Socks5 / Hysteria2 / Shadowsocks 六大主流协议，
+      全自动配置 TLS 证书与 CDN 加速，给你极速稳定的网络体验。
+    </p>
+    <div class="hero-actions">
+      <a href="https://blog.yunmgm.com" class="btn btn-primary">
+        开始搭建 →
+      </a>
+      <a href="https://blog.yunmgm.com" class="btn btn-outline">
+        查看文档
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">50+</div>
+        <div class="hero-stat-label">全球节点</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">6</div>
+        <div class="hero-stat-label">支持协议</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">1 min</div>
+        <div class="hero-stat-label">部署耗时</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">99.9%</div>
+        <div class="hero-stat-label">在线率</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 分割线 -->
+<div class="section-divider">
+  <div class="section-divider-icon">◆</div>
+</div>
+
+<!-- 协议展示 -->
+<section class="section" id="protocols">
+  <div class="section-header">
+    <div class="section-label">Supported Protocols</div>
+    <h2 class="section-title">六大<span>协议</span>全支持</h2>
+    <p class="section-desc">无论你追求极致速度还是最高安全性，都能找到最适合的方案</p>
+  </div>
+  <div class="protocols-grid">
+    <div class="protocol-card">
+      <div class="protocol-icon pc-1">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div class="protocol-name">VLESS</div>
+      <div class="protocol-desc">
+        新一代轻量级传输协议，无加密开销，搭配 XTLS 流控实现极致的性能和隐匿性。
+      </div>
+      <span class="protocol-tag tag-fast">⚡ 极速</span>
+    </div>
+
+    <div class="protocol-card">
+      <div class="protocol-icon pc-2">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div class="protocol-name">Trojan</div>
+      <div class="protocol-desc">
+        将流量伪装成 HTTPS 请求，完美模拟正常网页浏览，过墙能力极强。
+      </div>
+      <span class="protocol-tag tag-secure">🔒 隐匿</span>
+    </div>
+
+    <div class="protocol-card">
+      <div class="protocol-icon pc-3">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <div class="protocol-name">TUIC</div>
+      <div class="protocol-desc">
+        基于 QUIC 协议的多路复用方案，在弱网环境下依然保持卓越的连接稳定性。
+      </div>
+      <span class="protocol-tag tag-stable">📡 弱网优化</span>
+    </div>
+
+    <div class="protocol-card">
+      <div class="protocol-icon pc-4">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="protocol-name">Socks5</div>
+      <div class="protocol-desc">
+        经典的代理协议，广泛兼容各类应用，配合 TLS 加密依然安全可靠。
+      </div>
+      <span class="protocol-tag tag-stable">🌐 通用</span>
+    </div>
+
+    <div class="protocol-card">
+      <div class="protocol-icon pc-5">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <div class="protocol-name">Hysteria2</div>
+      <div class="protocol-desc">
+        基于修改版 QUIC 的高速协议，针对不稳定网络和高延迟场景深度优化。
+      </div>
+      <span class="protocol-tag tag-fast">🚀 超高速</span>
+    </div>
+
+    <div class="protocol-card">
+      <div class="protocol-icon pc-6">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777z"/><path d="M17 6l-3.5 3.5"/></svg>
+      </div>
+      <div class="protocol-name">Shadowsocks</div>
+      <div class="protocol-desc">
+        久经考验的经典协议，生态成熟、客户端丰富，适合各类场景稳定使用。
+      </div>
+      <span class="protocol-tag tag-stable">✅ 稳定</span>
+    </div>
+  </div>
+</section>
+
+<!-- 分割线 -->
+<div class="section-divider">
+  <div class="section-divider-icon">◆</div>
+</div>
+
+<!-- 教程步骤 -->
+<section class="section" id="tutorial">
+  <div class="section-header">
+    <div class="section-label">Quick Start</div>
+    <h2 class="section-title">四步<span>搭建</span>你的节点</h2>
+    <p class="section-desc">无需任何技术背景，跟着流程操作即可完成部署</p>
+  </div>
+  <div class="steps-list">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-info">
+        <div class="step-title">注册并选择套餐</div>
+        <div class="step-desc">
+          前往 <a href="https://blog.yunmgm.com" style="color:var(--accent);">YUNMGM</a> 注册账号，
+          根据你的需求选择合适的套餐方案。所有套餐均支持 6 种协议，按需切换。
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-info">
+        <div class="step-title">选择节点地区</div>
+        <div class="step-desc">
+          从全球 50+ 节点中选择最适合你的位置——日本、新加坡、美国的节点延迟低、
+          速度极快，欧洲和东南亚节点覆盖广泛。
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-info">
+        <div class="step-title">一键自动部署</div>
+        <div class="step-desc">
+          点击"立即部署"，系统将在 1 分钟内自动完成服务器配置、TLS 证书申请、
+          协议安装以及 CDN 加速的全流程。
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-info">
+        <div class="step-title">导入客户端即可使用</div>
+        <div class="step-desc">
+          部署完成后，复制生成的节点链接或扫描二维码，导入到你的客户端
+          （V2RayN、Shadowrocket、Clash 等）即可立即开始使用。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 分割线 -->
+<div class="section-divider">
+  <div class="section-divider-icon">◆</div>
+</div>
+
+<!-- 核心特性 -->
+<section class="section" id="features">
+  <div class="section-header">
+    <div class="section-label">Core Features</div>
+    <h2 class="section-title">为什么选择<span>YUNMGM</span></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-item">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">全自动部署</div>
+      <div class="feature-desc">无需手动配置服务器，一键完成从采购到上线的全流程</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🔐</div>
+      <div class="feature-title">TLS 自动证书</div>
+      <div class="feature-desc">自动申请和管理 SSL/TLS 证书，流量全程加密</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🌍</div>
+      <div class="feature-title">全球多地区</div>
+      <div class="feature-desc">覆盖亚太、北美、欧洲等核心区域，智能选择最优线路</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🔄</div>
+      <div class="feature-title">一键切换协议</div>
+      <div class="feature-desc">6 种协议随时切换，无需重建节点，适应不同网络环境</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">实时流量监控</div>
+      <div class="feature-desc">直观的流量使用面板，随时掌握用量与节点状态</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-title">高可用保障</div>
+      <div class="feature-desc">99.9% 在线率 SLA，多副本容灾，自动故障迁移</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-box">
+    <div class="cta-content">
+      <div class="cta-title">准备好开始了吗？</div>
+      <div class="cta-desc">
+        1 分钟完成部署，马上拥有属于自己的高速安全节点
+      </div>
+      <a href="https://blog.yunmgm.com" class="btn btn-primary">
+        立即免费体验 →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">YUNMGM</div>
+    <ul class="footer-links">
+      <li><a href="https://blog.yunmgm.com">服务条款</a></li>
+      <li><a href="https://blog.yunmgm.com">隐私政策</a></li>
+      <li><a href="https://blog.yunmgm.com">使用文档</a></li>
+      <li><a href="https://blog.yunmgm.com">联系我们</a></li>
+    </ul>
+    <div class="footer-copy">
+      &copy; 2024 YUNMGM. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ─── 星空粒子动画 ─── */
+(() => {
+  const canvas = document.getElementById('starsCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+
+  class Particle {
+    constructor() {
+      this.reset();
+      this.y = Math.random() * h;
+    }
+    reset() {
+      this.x = Math.random() * w;
+      this.y = -4;
+      this.size = Math.random() * 1.5 + 0.5;
+      this.speed = Math.random() * 0.4 + 0.1;
+      this.opacity = Math.random() * 0.5 + 0.15;
+    }
+    update() {
+      this.y += this.speed;
+      if (this.y > h + 4) this.reset();
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,229,255,${this.opacity})`;
+      ctx.fill();
+    }
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: 80 }, () => new Particle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => { p.update(); p.draw(); });
+
+    // 连线
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0,229,255,${0.04 * (1 - dist / 120)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', init);
+  init();
+  animate();
+})();
+
+/* ─── 导航栏滚动效果 ─── */
+(() => {
+  const nav = document.getElementById('nav');
+  let lastY = 0;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y > 100) {
+      nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.5)';
+    } else {
+      nav.style.boxShadow = 'none';
+    }
+    lastY = y;
+  });
+})();
+</script>
+</body>
+</html>
